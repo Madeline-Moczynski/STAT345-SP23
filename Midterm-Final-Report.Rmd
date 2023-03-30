@@ -1,0 +1,54 @@
+---
+title: "Milwaukee Bucks Shot Chart Report"
+name: "Madeline Moczynski"
+date: "2023-03-30"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+# Brief Report
+
+```{r, include=FALSE, warning=FALSE, echo=FALSE, message=FALSE, results='hide'}
+#Calling code to produce just graphics
+ source("C:/Users/Maddie's Laptop/Documents/Midterm-graphics.R")
+
+```
+
+(http://localhost:13325/session/filec2e4791e350f.gif)
+
+## Findings
+
+Brief Summary:
+
+-   Earlier years(2002-2005) the attempted shots were spread out very evenly throughout the whole court(within/at 3 point range)
+
+-   In 2006 you start to see more dense spots on the wings and right around the hoop
+
+-   In 2011 majority of 3 point shots attempted were on wing, also majority of shots attempted were right around hoop
+
+-   In 2016 the only spot dense with attempted shots was close to the hoop, this contradicts the years surrounding which seem to be more dense at 3 point line
+
+-   More recent years (2018-2021) majority of shots attempted are at 3 point line or in the lane
+
+More in Depth:
+
+-   Until 2006 it is very difficult to see any spots more dense with attempted shots than others. This could be because there was very little statistical technology of sports. There was most likely very little analyzation of the statistics: exactly where shots are made, by whom they are made, and when in the game they are made. Due to few data observations, plays were probably constructed under the basic idea of getting an open shot, regardless of where it was on the court. When looking at 2002, the first year displayed, the shot points appear to follow a grid pattern. This suggests that the location of the shot was more than likely an educated estimate and not a precise location. This could also be another factor in why there doesn't appear to be spots more dense with shots.
+
+-   Season 2011 through season 2016 show most shots were attempted within a 6 foot radius of the hoop or on the wings of the 3-point line. It also appears to be where the most purple(made shot) appears. This suggests that technology in these years has improved and coaches are able to gain more insight to what is going well and what is not. Another factor could include the players on the team throughout these years and what their strong suit is.
+
+-   In more recent years technology has changed drastically, due to these advancements, teams have access to numerous data observations and are then able to interpret them for team tactics which prove successful and those which prove opposite. Coaches are then able to look at this data and make better informed decisions about play calls and overall shooting dynamic. In addition to improved technology, coaching staff changes can have an effect on the plays called and therefore have an effect on where the shots are attempted. This can be seen very drastically from 2018 to 2019, where majority of 2 point shots not in the paint disappear.
+
+-   Overall changes of where shots are attempted can be due to coaching staff, players, and technology.
+
+### Above and Beyond
+
+```{r, fig.height=8, fig.width=8, fig.align='center', warning=FALSE, echo=FALSE}
+action_2015
+action_2021
+```
+
+### Findings
+
+-   Overall, Giannis attempted many more shots in the paint in 2021 than 2015. Giannis' most attempted shot in the paint in 2015 was a layup. This differs in 2021 where is most attempted shot is a driving layup. This suggests Giannis became a more aggressive player over the years because he is willing to drive the ball to the hoop himself. In 2025, there are less classifications of shot types, this provides more evidence that sports statistics have made huge advancements in a few year span.

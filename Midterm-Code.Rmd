@@ -1,0 +1,171 @@
+---
+title: "Midterm-Code"
+name: "Madeline Moczynski"
+font: 12pt
+output: html_document
+date: "2023-03-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Code to call packages forward to create graphics
+```{r}
+library(nbastatR)
+library(ggplot2)
+library(gganimate)
+library(tidyverse)
+library(gapminder)
+library(gifski) 
+library(lubridate) 
+library(maps) 
+library(mapdata) 
+library(transformr) 
+library(ggthemes)
+library(base)
+```
+
+## Gathering data for Milwaukee Bucks shots over 20 years
+```{r}
+year <- c(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021)
+Sys.setenv("VROOM_CONNECTION_SIZE" = 131072 * 10000)
+
+
+#input: year
+#output: team shot data for Milwaukee bucks for given year(input)
+year_function <- function(x){
+    teams_shots(teams = "Milwaukee Bucks", season_types = "Regular Season", seasons = x)
+}
+
+#create individual tables of each years data (2002-2021)
+years <- lapply(year, year_function)
+
+#combines each table into one big data frame of all years 2002 - 2021
+teams_shots_20yrs <- list_rbind(years)
+teams_shots_20yrs
+
+```
+
+## Creating and animating the graph of team shots 
+```{r}
+
+#Code for Milwaukee Bucks regular season shots animated over 20 years(2002-2021)
+mil_shots_20yrs <- teams_shots_20yrs %>%
+  ggplot(aes(locationX/10, locationY/10, color = isShotMade)) +
+  geom_point(alpha = 0.30, size = 1) +
+  geom_segment(aes(22, -4, xend = 22, yend = 10), color = "black", linewidth = .75) +
+  geom_segment(aes(-22, -4, xend = -22, yend = 10), color = "black", linewidth = .75) +
+  geom_segment(aes(6, -4, xend = 6, yend = 15), color = "black", linewidth = .75) +
+  geom_segment(aes(-6, -4, xend = -6, yend = 15), color = "black", linewidth = .75) +
+  geom_segment(aes(-25, -4, xend = 25, yend = -4), color = "black", linewidth = .75) +
+  geom_segment(aes(-25, -4, xend = -25, yend = 47), color = "black", linewidth = .75) + 
+  geom_segment(aes(25, -4, xend = 25, yend = 47), color = "black", linewidth = .75) +
+  geom_segment(aes(-25, 47, xend = 25, yend = 47), color = "black", linewidth = .75) + 
+  geom_segment(aes(-6, 15, xend = 6, yend = 15), color = "black", linewidth = .75) +
+  geom_curve(aes(22, 10, xend = -22, yend = 10), curvature = .42, color = "black", linewidth = .75) +
+  geom_curve(aes(6, 15, xend = -6, yend = 15), curvature = .75, color = "black", linewidth = .75) +
+  geom_curve(aes(-6, 15, xend = 6, yend = 15), curvature = .75, color = "black", linetype = "dashed", linewidth = .75) +
+  geom_curve(aes(-6, 47, xend = 6, yend = 47), curvature = .75, color = "black", linewidth = .75) +
+  geom_segment(aes(-3, 0, xend = 3, yend = 0), color = "black", linewidth = .75) +
+  geom_curve(aes(-.75, 1.5, xend = .75, yend = 1.5), curvature = 1, color = "black", linewidth = .75) +
+  geom_curve(aes(.75, 1.5, xend = -.75, yend = 1.5), curvature = 1, color = "black", linewidth = .75) +
+  geom_segment(aes(-8, -4, xend = -8, yend = 15), color = "black", linewidth = .75) +
+  geom_segment(aes(8, -4, xend = 8, yend = 15), color = "black", linewidth = .75) +
+  geom_segment(aes(-8, 15, xend = -6, yend = 15), color = "black", linewidth = .75) +
+  geom_segment(aes(-8, -4, xend = -6, yend = -4), color = "black", linewidth = .75) +
+  geom_segment(aes(8, 15, xend = 6, yend = 15), color = "black", linewidth = .75) +
+  geom_segment(aes(8, -4, xend = 6, yend = -4), color = "black", linewidth = .75) +
+  geom_curve(aes(4, 0, xend = -4, yend = 0), curvature = .75 ,color = "black", linewidth = .75) +
+  scale_color_discrete(name = "Is Shot Made?", labels = c("No", "Yes"), type = c("forestgreen", "purple")) +
+  xlab("Horizontal Distance to Hoop (in ft.)") +
+  ylab("Vertical Distance to Hoop (in ft.)")
+
+#Code to animate the graph, giving data for each years shots individually
+animate_shots_20yrs <- mil_shots_20yrs +
+  transition_time(yearSeason) +
+  labs(title = "Milwaukee Bucks Regular Season Shots (2002-2021)",  subtitle = 'Year: {frame_time}')
+animate(animate_shots_20yrs, fps = 0.5, nframes = 20)
+
+
+
+```
+
+
+## Code to help analyze what might be happening between different seasons
+
+```{r}
+#See whats going on in 2011, why wing is so dense with shots
+team_shots_tibble <- as_tibble(teams_shots_20yrs)
+team_shots_tibble %>%
+  filter(yearSeason == 2011) %>%
+  filter(typeShot == "3PT Field Goal") %>%
+  filter(isShotMade == "TRUE") %>%
+  filter(nameZone == "Right Side" | nameZone == "Left Side") %>%
+  
+  mutate(locationX = locationX/10) %>%
+  mutate(locationY = locationY/10)
+
+
+#Carlos Delfino = 51
+#Keyon Dooling = 31
+#John Salmons = 41
+
+#see whats going on in 2016, why under hoop is so dense and every other spot on court is equally dense
+team_shots_tibble %>%
+  filter(yearSeason == 2016) %>%
+  filter(typeShot == "2PT Field Goal") %>%
+  mutate(locationX = locationX/10) %>%
+  mutate(locationY = locationY/10) %>%
+  filter(locationX > -5 & locationX < 5) %>%
+  filter(locationY < 5 ) 
+  
+#giannis = 600
+#greg monroe = 670
+
+
+```
+
+## Above and beyond: creating bar charts to compare Giannis' shots in the paint in 2015 and 2021
+```{r}
+#graph displaying type of shots in paint by giannis in 2015
+giannis_2015 <- shots_as_tibble %>%
+  filter(yearSeason == 2015) %>%
+  mutate(locationX = locationX/10) %>%
+  mutate(locationY = locationY/10) %>%
+  filter(locationX >= -5 & locationX <= 5) %>%
+  filter(locationY <= 5) %>%
+  filter(namePlayer == "Giannis Antetokounmpo")
+
+action_2015 <- giannis_2015 %>%
+  ggplot(aes(typeAction, fill = typeAction)) +
+  geom_bar() +
+  xlab("Type of Shot") +
+  ylab("Count") +
+  ggtitle("Giannis' Shots in the Paint (2015)")
+action_2015
+
+#graph displaying type of shots in paint by giannis in 2021
+giannis_2021 <- shots_as_tibble %>%
+  filter(yearSeason == 2021) %>%
+  mutate(locationX = locationX/10) %>%
+  mutate(locationY = locationY/10) %>%
+  filter(locationX >= -5 & locationX <= 5) %>%
+  filter(locationY <= 5) %>%
+  filter(namePlayer == "Giannis Antetokounmpo")
+
+
+action_2021 <- giannis_2021 %>%
+  ggplot(aes(typeAction, fill = typeAction)) +
+  geom_bar() +
+  xlab("Type of Shot") +
+  ylab("Count") +
+  ggtitle("Giannis' Shots in the Paint (2021)")
+action_2021
+
+
+```
+
+
+
+
